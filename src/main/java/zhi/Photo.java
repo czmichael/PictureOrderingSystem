@@ -3,7 +3,6 @@ package zhi;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,6 +12,14 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
 
+
+/**
+ * Class encapsulates meta data such as time taken of a photo
+ * 
+ * @author Zhi Chen
+ * created: 04/23/2016
+ * updated: 06/07/2020
+ */
 public class Photo {
 	
 	private Path path;
@@ -28,6 +35,7 @@ public class Photo {
 
 	private Metadata retrieveMetadata() {
 		File file = this.path.toFile();
+		this.fileName = file.getName();
 		Metadata metadata = null;
 		try {
 			metadata = ImageMetadataReader.readMetadata(file);
@@ -91,5 +99,9 @@ public class Photo {
 
 	public void setPath(Path path) {
 		this.path = path;
+	}
+	
+	public String toString() {
+		return this.fileName;
 	}
 }
