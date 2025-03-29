@@ -19,7 +19,7 @@ public class App {
 	 */
     public static void main( String[] args ) {
     	
-    		String folderString = "/Users/cz_michael/Desktop/1";
+    		String folderString = "/Users/zhichen/Desktop/1";
     		PhotoSorter photoSorter = new PhotoSorter();
     		photoSorter.organizePhotos(folderString);
     }
