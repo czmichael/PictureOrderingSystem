@@ -21,6 +21,13 @@ public class FileCreationTimeComparator implements Comparator<Photo> {
 		Date dateB = o2.getCreatedDate();
 		if (dateA != null && dateB != null) {
 			return dateA.compareTo(dateB);
+		} else {
+			if (dateA == null) {
+				throw new RuntimeException(o1 + " created date is null");
+			}
+			if (dateB == null) {
+				throw new RuntimeException(o2 + " created date is null");
+			}
 		}
 		return -1;
 	}

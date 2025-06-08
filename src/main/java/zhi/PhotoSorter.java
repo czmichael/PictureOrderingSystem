@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 /**
@@ -27,7 +29,7 @@ public class PhotoSorter {
 	 * reordering is needed.
 	 * Change this if photos from different devices and clocks that were not synchronized. 
 	 */
-	private static final int INTERVAL = 3;
+	private static final int INTERVAL = 10;
 	
 	/**
 	 * Recursively collect photos in the current and sub folders. 
@@ -44,22 +46,25 @@ public class PhotoSorter {
 	    		
 	    	    for (Path path: stream) {
     	    	
-				File file = new File(path.toString());
-				if (file.isDirectory() && file.getAbsolutePath().contains(".DS_Store") == false) { 
-					/*
-					 * Recursive call to sort and rename all sub folders
-					 */
-					organizePhotos(file.getAbsolutePath());
-				} else if (file.isFile() && file.getAbsolutePath().contains(".DS_Store") == false) {
-					Photo photo = new Photo(path);
-					photoList.add(photo);   
-				} else {
-					if (file.getAbsolutePath().contains(".DS_Store") == true) {
-						/* Nothing to do */
+					File file = new File(path.toString());
+					if (file.isDirectory() && file.getAbsolutePath().contains(".DS_Store") == false) { 
+						/*
+						 * Recursive call to sort and rename all sub folders
+						 */
+						organizePhotos(file.getAbsolutePath());
+					} else if (file.isFile() && file.getAbsolutePath().contains(".DS_Store") == false) {
+						Photo photo = new Photo(path);
+						if (photo.getCreatedDate() != null) {
+							photoList.add(photo); // only add photo with created date info, otherwise the order will be wrong
+						}
+						   
 					} else {
-						throw new RuntimeException("Unregonized file or folder: " + file.getAbsolutePath());
+						if (file.getAbsolutePath().contains(".DS_Store") == true) {
+							/* Nothing to do */
+						} else {
+							throw new RuntimeException("Unregonized file or folder: " + file.getAbsolutePath());
+						}
 					}
-				}
 	    	    }
 	    	    
 	    	    if (photoList.size() > 0) {	    	    		
@@ -90,18 +95,21 @@ public class PhotoSorter {
 	    int i = 1;
 	    Random rand = new Random();
 	    Integer randInt = rand.nextInt(1000000000);
+	    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");
 	    
 	    for (Photo p: photoList) {
-	    	    	String formattedName = randInt.toString() + "_" + String.format("%04d", i);
-	    	    	System.out.println(p.getFileName() + " --- "  + p.getCreatedDate());
-	    	    	
-	    	    	File file = new File(folderString + "/" + formattedName +".JPG");
-	    	    	if (file.exists() && ! file.isDirectory()) { 
-	    	    	    System.out.print(folderString + "/" + formattedName +".JPG ---- exist." );
-	    	    	} else {
-	    	    		Files.move(p.getPath(), Paths.get(folderString + "/" + formattedName +".JPG"), 
-	    	    														StandardCopyOption.REPLACE_EXISTING);
-	    	    	}
+	    	Date createdDate = p.getCreatedDate();
+	    	String formattedDate = formatter.format(createdDate);
+	    	String formattedName = randInt.toString() + "_" + String.format("%04d", i) + "_" + formattedDate; 
+	    	System.out.println(p.getFileName() + " --- "  + p.getCreatedDate());
+	    	
+	    	File file = new File(folderString + "/" + formattedName +".JPG");
+	    	if (file.exists() && ! file.isDirectory()) { 
+	    	    System.out.print(folderString + "/" + formattedName +".JPG ---- exist." );
+	    	} else {
+	    		Files.move(p.getPath(), Paths.get(folderString + "/" + formattedName +".JPG"), 
+	    														StandardCopyOption.REPLACE_EXISTING);
+	    	}
 	    	    	
 	     	System.out.println(p.getFileName() + " --- "  + p.getCreatedDate());
 	    	    	i = i + INTERVAL;
