@@ -95,7 +95,7 @@ public class PhotoSorter {
 	    int i = 1;
 	    Random rand = new Random();
 	    Integer randInt = rand.nextInt(1000000000);
-	    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");
+	    SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd_HHmmss");
 	    
 	    for (Photo p: photoList) {
 	    	Date createdDate = p.getCreatedDate();
